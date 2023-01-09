@@ -39,10 +39,10 @@ def fraud_detector(activity_df, threshold):
   pred = res.json()["predictions"][0]
 
   pred_df = pd.DataFrame([{
+    "Time": activity_df["Time"][i],
     "Pred": x[1][1],
-    "Fraud": True if x[1][1] > threshold else False
-  } for x in pred["values"]])
-  print(pred_df)
+    "Fraud": x[1][1] > threshold,
+  } for i, x in enumerate(pred["values"])])
   return (
       f"{pred_df.Fraud.sum()} / {len(pred_df)}",
       pred_df,
@@ -63,7 +63,7 @@ outputs = [
     gr.Label(label="Fraudulent Transactions"),
     gr.Dataframe(
       row_count=(2,"dynamic"),
-      col_count=(2,"fixed"),
+      col_count=(3,"fixed"),
       label="Predictions"),
 ]
 
