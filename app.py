@@ -38,8 +38,11 @@ def fraud_detector(activity_df, threshold):
   res.raise_for_status()
   pred = res.json()["predictions"][0]
 
-  pred_df = pd.DataFrame([{ "Pred": x[1][1] } for x in pred["values"]])
-  pred_df["Fraud"] = pred_df.Pred.map(lambda x: True if x > threshold else False)
+  pred_df = pd.DataFrame([{
+    "Pred": x[1][1],
+    "Fraud": True if x[1][1] > threshold else False
+  } for x in pred["values"]])
+  print(pred_df)
   return (
       f"{pred_df.Fraud.sum()} / {len(pred_df)}",
       pred_df,
@@ -60,7 +63,7 @@ outputs = [
     gr.Label(label="Fraudulent Transactions"),
     gr.Dataframe(
       row_count=(2,"dynamic"),
-      col_count=(3,"fixed"),
+      col_count=(2,"fixed"),
       label="Predictions"),
 ]
 
@@ -70,7 +73,7 @@ gr.Interface(
   inputs,
   outputs,
   title="Credit Card Fraud Detection",
-  examples = [[examples_df]],
+  examples = [[examples_df, 0.6]],
   allow_flagging="never",
 ).launch(
   server_name="0.0.0.0",
