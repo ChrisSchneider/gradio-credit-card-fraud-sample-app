@@ -71,8 +71,8 @@ gr.Interface(
   outputs,
   title="Credit Card Fraud Detection",
   examples = [[examples_df]],
-  allow_flagging="never",              # enable to collect feedback
+  allow_flagging="never",
 ).launch(
-  server_name="0.0.0.0",               # exposes app outside of the container
-  server_port=os.getenv("PORT", None), # start on PORT if defined or random
+  server_name="0.0.0.0",
+  server_port=int(os.getenv("PORT")) if "PORT" in os.environ else None,
 )
